@@ -1,4 +1,5 @@
 import time
+from pathlib import Path
 
 import altair as alt
 import matplotlib.pyplot as plt
@@ -7,6 +8,365 @@ import pandas as pd
 import plotly.express as px
 import pydeck as pdk
 import streamlit as st
+
+# ─── Theme presets ───────────────────────────────────────────────────────────
+THEMES = {
+    "New Streamlit 1": """\
+[theme]
+base = "light"
+font = "Manrope:https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+headingFont = "Manrope:https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+headingFontWeights = [800, 700, 600, 600, 500, 500]
+baseFontSize = 14
+baseRadius = "0.375rem"
+buttonRadius = "0.375rem"
+showSidebarBorder = true
+showWidgetBorder = true
+
+primaryColor = "#DC2626"
+backgroundColor = "#F5F5F4"
+secondaryBackgroundColor = "#F5F5F4"
+textColor = "#1A1A2E"
+borderColor = "#E5E4E1"
+linkColor = "#1D4ED8"
+linkUnderline = false
+
+redColor = "#DC2626"
+blueColor = "#2563EB"
+greenColor = "#059669"
+violetColor = "#7C3AED"
+orangeColor = "#EA580C"
+yellowColor = "#CA8A04"
+grayColor = "#787673"
+
+codeBackgroundColor = "#F6F6F4"
+codeTextColor = "#DC2626"
+codeFont = "SFMono-Regular, Menlo, Consolas, monospace"
+
+dataframeBorderColor = "#E5E4E1"
+dataframeHeaderBackgroundColor = "#EDEDEB"
+
+chartCategoricalColors = [
+    "#2563EB",
+    "#059669",
+    "#DC2626",
+    "#EA580C",
+    "#7C3AED",
+    "#CA8A04",
+    "#0891B2",
+    "#64748B",
+]
+
+[theme.sidebar]
+backgroundColor = "#F5F5F4"
+""",
+    "Streamlit 1 DM": """\
+[theme]
+base = "dark"
+font = "Manrope:https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+headingFont = "Manrope:https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+headingFontWeights = [800, 700, 600, 600, 500, 500]
+baseFontSize = 14
+baseRadius = "0.375rem"
+buttonRadius = "0.375rem"
+showSidebarBorder = true
+showWidgetBorder = true
+
+primaryColor = "#DC2626"
+backgroundColor = "#1A1A1E"
+secondaryBackgroundColor = "#252528"
+textColor = "#E8E6E3"
+borderColor = "#3A3937"
+linkColor = "#60A5FA"
+linkUnderline = false
+
+redColor = "#EF4444"
+blueColor = "#60A5FA"
+greenColor = "#34D399"
+violetColor = "#A78BFA"
+orangeColor = "#FB923C"
+yellowColor = "#FACC15"
+grayColor = "#A8A29E"
+
+codeBackgroundColor = "#252528"
+codeTextColor = "#EF4444"
+codeFont = "SFMono-Regular, Menlo, Consolas, monospace"
+
+dataframeBorderColor = "#3A3937"
+dataframeHeaderBackgroundColor = "#252528"
+
+chartCategoricalColors = [
+    "#60A5FA",
+    "#34D399",
+    "#EF4444",
+    "#FB923C",
+    "#A78BFA",
+    "#FACC15",
+    "#0891B2",
+    "#A8A29E",
+]
+
+[theme.sidebar]
+backgroundColor = "#1A1A1E"
+""",
+    "SIS Light": """\
+[theme]
+primaryColor = "#1A6CE7"
+secondaryTextColor= "#5D6A85"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#ECEEF1"
+codeBackgroundColor = "#fbfbfb"
+textColor = "#1E252F"
+linkColor = "#085BD7"
+borderColor = "#D5DAE4"
+showWidgetBorder = true
+showSidebarBorder = true
+baseRadius = "8px"
+buttonRadius = "8px"
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+headingFont = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+codeFont = "JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
+codeFontSize = "13px"
+codeTextColor = "#002C6E"
+baseFontSize = 14
+baseFontWeight = 400
+headingFontSizes = ["36px", "24px", "20px", "16px", "14px", "12px"]
+headingFontWeights = [600, 600, 600, 500, 500, 500]
+linkUnderline = false
+chartCategoricalColors = ["#1A6CE7", "#51CAA5", "#ECB700", "#FF7C1D", "#DE350B", "#6554C0", "#FFAB00", "#00A3BF"]
+
+blueColor = "#1A6CE7"
+blueBackgroundColor = "#F1F7FF"
+blueTextColor = "#004CBE"
+
+greenColor = "#51CAA5"
+greenBackgroundColor = "#EEFBF6"
+greenTextColor = "#137054"
+
+yellowColor = "#ECB700"
+yellowBackgroundColor = "#FFFBEB"
+yellowTextColor = "#BC9201"
+
+orangeColor = "#FF7C1D"
+orangeBackgroundColor = "#FFF5EC"
+orangeTextColor = "#934812"
+
+redColor = "#D3132F"
+redBackgroundColor = "#FEF2F3"
+redTextColor = "#A40319"
+
+violetColor = "#D45CFF"
+violetBackgroundColor = "#FBF3FF"
+violetTextColor = "#762D91"
+
+dataframeBorderColor = "#D5DAE4"
+dataframeHeaderBackgroundColor = "#fbfbfb"
+
+[theme.sidebar]
+backgroundColor = "#F7F7F7"
+secondaryBackgroundColor = "#fbfbfb"
+textColor = "#1E252F"
+borderColor = "#D5DAE4"
+""",
+    "SIS Dark": """\
+[theme]
+primaryColor = "#4884FF"
+secondaryTextColor= "#8A96AD"
+backgroundColor = "#191E24"
+secondaryBackgroundColor = "#293246"
+codeBackgroundColor = "#1E252F"
+textColor = "#D5DAE4"
+linkColor = "#5999F8"
+borderColor = "#293246"
+showWidgetBorder = true
+showSidebarBorder = true
+baseRadius = "8px"
+buttonRadius = "8px"
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+headingFont = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+codeFont = "JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
+codeFontSize = "13px"
+codeTextColor = "#002C6E"
+baseFontSize = 14
+baseFontWeight = 400
+headingFontSizes = ["36px", "24px", "20px", "16px", "14px", "12px"]
+headingFontWeights = [600, 600, 600, 500, 500, 500]
+linkUnderline = false
+chartCategoricalColors = ["#1A6CE7", "#51CAA5", "#ECB700", "#FF7C1D", "#DE350B", "#6554C0", "#FFAB00", "#00A3BF"]
+
+blueColor = "#1A6CE7"
+blueBackgroundColor = "#1E2A3D"
+blueTextColor = "#7EB3F7"
+
+greenColor = "#51CAA5"
+greenBackgroundColor = "#1A2E2A"
+greenTextColor = "#7EDFC2"
+
+yellowColor = "#ECB700"
+yellowBackgroundColor = "#2D2A1A"
+yellowTextColor = "#FFD966"
+
+orangeColor = "#FF7C1D"
+orangeBackgroundColor = "#2D221A"
+orangeTextColor = "#FFB07A"
+
+redColor = "#D3132F"
+redBackgroundColor = "#2D1A1E"
+redTextColor = "#F7808E"
+
+violetColor = "#D45CFF"
+violetBackgroundColor = "#2A1A2D"
+violetTextColor = "#E5A3FF"
+
+dataframeBorderColor = "#d0e8f2"
+dataframeHeaderBackgroundColor = "#e8f4f8"
+
+[theme.sidebar]
+backgroundColor = "#1E252F"
+secondaryBackgroundColor = "#293246"
+textColor = "#D5DAE4"
+borderColor = "#293246"
+""",
+    "SIS-2": """\
+[theme]
+primaryColor = "#29B5E8"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f4f9fc"
+codeBackgroundColor = "#e8f4f8"
+textColor = "#11567F"
+linkColor = "#29B5E8"
+borderColor = "#d0e8f2"
+showWidgetBorder = true
+showSidebarBorder = true
+baseRadius = "8px"
+buttonRadius = "8px"
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+headingFont = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+codeFont = "JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
+codeFontSize = "13px"
+codeTextColor = "#11567F"
+baseFontSize = 14
+baseFontWeight = 400
+headingFontSizes = ["36px", "24px", "20px", "16px", "14px", "12px"]
+headingFontWeights = [800, 700, 600, 500, 500, 500]
+linkUnderline = false
+chartCategoricalColors = ["#29B5E8", "#FF8B00", "#36B37E", "#6554C0", "#DE350B", "#11567F", "#FFAB00", "#00A3BF"]
+blueColor = "#29B5E8"
+greenColor = "#36B37E"
+yellowColor = "#FFAB00"
+orangeColor = "#FF8B00"
+redColor = "#DE350B"
+violetColor = "#6554C0"
+dataframeBorderColor = "#d0e8f2"
+dataframeHeaderBackgroundColor = "#e8f4f8"
+
+[theme.sidebar]
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f4f9fc"
+textColor = "#11567F"
+borderColor = "#d0e8f2"
+""",
+    "Streamlit 2": """\
+[theme]
+base = "light"
+font = "Manrope:https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap"
+headingFont = "Manrope:https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap"
+headingFontWeights = [900, 700, 600, 600, 500, 500]
+headingFontSizes = ["38px", "24px", "20px", "16px", "14px", "12px"]
+baseFontSize = 14
+baseRadius = "0.375rem"
+buttonRadius = "0.375rem"
+showSidebarBorder = true
+showWidgetBorder = true
+
+primaryColor = "#FF4B4B"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F8F9FA"
+textColor = "#31333F"
+borderColor = "#D6D9E0"
+linkColor = "#4B9AE8"
+linkUnderline = false
+
+blueColor = "#4B9AE8"
+greenColor = "#36B5A0"
+
+codeBackgroundColor = "#F8F9FA"
+codeTextColor = "#FF4B4B"
+codeFont = "SFMono-Regular, Menlo, Consolas, monospace"
+
+dataframeBorderColor = "#E8E8ED"
+dataframeHeaderBackgroundColor = "#F8F9FA"
+
+chartCategoricalColors = [
+    "#FF4B4B",
+    "#4B9AE8",
+    "#7ECBF5",
+    "#36B5A0",
+    "#6C63FF",
+    "#FF8C00",
+    "#FACA15",
+    "#808495",
+]
+
+[theme.sidebar]
+backgroundColor = "#F8F9FA"
+""",
+    "Streamlit 3": """\
+[theme]
+base = "light"
+font = "Manrope:https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap"
+headingFont = "Manrope:https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap"
+headingFontWeights = [900, 700, 600, 600, 500, 500]
+headingFontSizes = ["38px", "24px", "20px", "16px", "14px", "12px"]
+baseFontSize = 14
+baseRadius = "0.375rem"
+buttonRadius = "0.375rem"
+showSidebarBorder = true
+showWidgetBorder = true
+
+primaryColor = "#FF4B4B"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F0F2F6"
+textColor = "#31333F"
+borderColor = "#D6D9E0"
+linkColor = "#4B9AE8"
+linkUnderline = false
+
+redColor = "#FF4B4B"
+blueColor = "#4B9AE8"
+greenColor = "#36B5A0"
+violetColor = "#7C3AED"
+orangeColor = "#EA580C"
+yellowColor = "#CA8A04"
+grayColor = "#787673"
+
+codeBackgroundColor = "#F0F2F6"
+codeTextColor = "#FF4B4B"
+codeFont = "SFMono-Regular, Menlo, Consolas, monospace"
+
+dataframeBorderColor = "#D6D9E0"
+dataframeHeaderBackgroundColor = "#F0F2F6"
+
+chartCategoricalColors = [
+    "#FF4B4B",
+    "#4B9AE8",
+    "#7ECBF5",
+    "#36B5A0",
+    "#7C3AED",
+    "#EA580C",
+    "#CA8A04",
+    "#64748B",
+]
+
+[theme.sidebar]
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F7F7F7"
+textColor = "#31333F"
+borderColor = "#EBEBEB"
+""",
+}
+
+CONFIG_PATH = Path(__file__).parent / ".streamlit" / "config.toml"
 
 LOREM = """Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."""
 
@@ -25,6 +385,37 @@ with st.sidebar:
     top_nav = st.toggle("Top navigation", False)
     wide_mode = st.toggle("Wide mode", False)
     st.divider()
+
+    # Theme switcher
+    current_config = CONFIG_PATH.read_text() if CONFIG_PATH.exists() else ""
+    # Detect if current config matches a preset
+    matched_theme = None
+    for name, content in THEMES.items():
+        if current_config.strip() == content.strip():
+            matched_theme = name
+            break
+
+    theme_options = list(THEMES.keys())
+    if matched_theme is None:
+        theme_options = ["Custom (edited)"] + theme_options
+        current_index = 0
+    else:
+        current_index = theme_options.index(matched_theme)
+
+    selected_theme = st.selectbox("Theme", theme_options, index=current_index)
+    if selected_theme != "Custom (edited)" and selected_theme != matched_theme:
+        CONFIG_PATH.write_text(THEMES[selected_theme])
+        st.rerun()
+
+# Remove background from selectbox/dropdown widgets
+st.markdown("""
+<style>
+    div[data-baseweb="select"] > div,
+    div[data-baseweb="input"] > div {
+        background-color: transparent !important;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 
 st.logo("https://streamlit.io/images/brand/streamlit-mark-color.png")
