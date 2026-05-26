@@ -231,8 +231,8 @@ borderColor = "#293246"
 [theme]
 primaryColor = "#29B5E8"
 backgroundColor = "#ffffff"
-secondaryBackgroundColor = "#f4f9fc"
-codeBackgroundColor = "#e8f4f8"
+secondaryBackgroundColor = "#f7fbfd"
+codeBackgroundColor = "#f2f8fb"
 textColor = "#11567F"
 linkColor = "#29B5E8"
 borderColor = "#d0e8f2"
@@ -240,15 +240,14 @@ showWidgetBorder = true
 showSidebarBorder = true
 baseRadius = "8px"
 buttonRadius = "8px"
-font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-headingFont = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-codeFont = "JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
+font = "Inter"
+codeFont = "JetBrainsMono"
 codeFontSize = "13px"
 codeTextColor = "#11567F"
 baseFontSize = 14
 baseFontWeight = 400
-headingFontSizes = ["36px", "24px", "20px", "16px", "14px", "12px"]
-headingFontWeights = [800, 700, 600, 500, 500, 500]
+headingFontSizes = ["32px", "24px", "20px", "16px", "14px", "12px"]
+headingFontWeights = [600, 600, 600, 500, 500, 500]
 linkUnderline = false
 chartCategoricalColors = ["#29B5E8", "#FF8B00", "#36B37E", "#6554C0", "#DE350B", "#11567F", "#FFAB00", "#00A3BF"]
 blueColor = "#29B5E8"
@@ -258,13 +257,42 @@ orangeColor = "#FF8B00"
 redColor = "#DE350B"
 violetColor = "#6554C0"
 dataframeBorderColor = "#d0e8f2"
-dataframeHeaderBackgroundColor = "#e8f4f8"
+dataframeHeaderBackgroundColor = "#f2f8fb"
 
 [theme.sidebar]
-backgroundColor = "#ffffff"
-secondaryBackgroundColor = "#f4f9fc"
+secondaryBackgroundColor = "#f7fbfd"
 textColor = "#11567F"
 borderColor = "#d0e8f2"
+
+[[theme.fontFaces]]
+family = "Inter"
+url = "app/static/Inter-Regular.ttf"
+weight = 400
+
+[[theme.fontFaces]]
+family = "Inter"
+url = "app/static/Inter-Medium.ttf"
+weight = 500
+
+[[theme.fontFaces]]
+family = "Inter"
+url = "app/static/Inter-SemiBold.ttf"
+weight = 600
+
+[[theme.fontFaces]]
+family = "Inter"
+url = "app/static/Inter-Bold.ttf"
+weight = 700
+
+[[theme.fontFaces]]
+family = "JetBrainsMono"
+url = "app/static/JetBrainsMono-Regular.ttf"
+weight = 400
+
+[[theme.fontFaces]]
+family = "JetBrainsMono"
+url = "app/static/JetBrainsMono-Medium.ttf"
+weight = 500
 """,
     "Streamlit 2": """\
 [theme]
