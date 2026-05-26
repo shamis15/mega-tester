@@ -186,7 +186,7 @@ font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;70
 headingFont = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
 codeFont = "JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
 codeFontSize = "13px"
-codeTextColor = "#002C6E"
+codeTextColor = "#7EB3F7"
 baseFontSize = 14
 baseFontWeight = 400
 headingFontSizes = ["36px", "24px", "20px", "16px", "14px", "12px"]
@@ -218,8 +218,8 @@ violetColor = "#D45CFF"
 violetBackgroundColor = "#2A1A2D"
 violetTextColor = "#E5A3FF"
 
-dataframeBorderColor = "#d0e8f2"
-dataframeHeaderBackgroundColor = "#e8f4f8"
+dataframeBorderColor = "#293246"
+dataframeHeaderBackgroundColor = "#1E252F"
 
 [theme.sidebar]
 backgroundColor = "#1E252F"
